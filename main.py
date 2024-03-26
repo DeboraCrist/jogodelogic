@@ -1,107 +1,87 @@
 import tkinter as tk
 
-movimentos = []
-botoes = []
+class JogoFutebol:
+    def __init__(self, janela):
+        self.janela = janela
+        self.janela.title("Vai que é tua Carolino")
 
-def iniciar_arrastar(event, botao):
-    canvas.bind("<B1-Motion>", lambda event, botao=botao: arrastar(event, botao))
+        self.movimentos = []
 
-def arrastar(event, botao):
-    x, y = event.x, event.y
-    canvas.coords(botao, x - 10, y - 10, x + 10, y + 10)
+        self.frame_controles = tk.Frame(self.janela, bg="#f0f0f0")
+        self.frame_controles.pack(padx=10, pady=10)
 
-def move_frente():
-    movimentos.append("frente")
-    criar_botao_log("Frente")
+        self.frame_log = tk.Frame(self.janela, bg="#f0f0f0")
+        self.frame_log.pack(side=tk.RIGHT, padx=10, pady=10)
 
-def move_tras():
-    movimentos.append("tras")
-    criar_botao_log("Trás")
+        self.texto_log = tk.Text(self.frame_log, width=30, height=10, bg="#e6e6e6", fg="#333", font=("Helvetica", 10))
+        self.texto_log.pack()
 
-def move_esquerda():
-    movimentos.append("esquerda")
-    criar_botao_log("Esquerda")
+        self.btn_compilar = tk.Button(self.frame_log, text="Compilar Movimentos", command=self.compilar_movimentos, bg="#4CAF50", fg="white")
+        self.btn_compilar.pack(pady=(10,0))
 
-def move_direita():
-    movimentos.append("direita")
-    criar_botao_log("Direita")
+        self.texto_log.config(state=tk.DISABLED)
 
-def verificar_gol():
-    coordenadas_bola = canvas.coords(personagem)
-    coordenadas_gol = canvas.coords(gol)
-    if coordenadas_bola[0] >= coordenadas_gol[0] and coordenadas_bola[1] >= coordenadas_gol[1] and coordenadas_bola[2] <= coordenadas_gol[2] and coordenadas_bola[3] <= coordenadas_gol[3]:
-        registrar_movimento("Bola chegou ao gol!")
-    else:
-        registrar_movimento("Bola não chegou ao gol!")
+        self.canvas = tk.Canvas(self.janela, width=300, height=300, bg="white", highlightthickness=0)
+        self.canvas.pack()
+        self.personagem = self.canvas.create_oval(140, 140, 160, 160, fill="blue")
+        self.gol = self.canvas.create_rectangle(120, 20, 180, 0, fill="red")
 
-def compilar_movimentos():
-    for movimento in movimentos:
-        if movimento == "frente":
-            canvas.move(personagem, 0, -20)
-        elif movimento == "tras":
-            canvas.move(personagem, 0, 20)
-        elif movimento == "esquerda":
-            canvas.move(personagem, -20, 0)
-        elif movimento == "direita":
-            canvas.move(personagem, 20, 0)
-    movimentos.clear()
-    verificar_gol()
+        self.btn_frente = tk.Button(self.frame_controles, text="Mover para Frente", command=self.move_frente, bg="#4CAF50", fg="white")
+        self.btn_frente.grid(row=5, column=5, padx=5, pady=5)
 
-def criar_botao_log(texto):
-    botao = tk.Button(frame_log, text=texto)
-    botao.pack()
-    botao.bind("<Button-1>", lambda event, botao=botao: iniciar_arrastar(event, botao))
-    botoes.append(botao)
+        self.btn_tras = tk.Button(self.frame_controles, text="Mover para Trás", command=self.move_tras, bg="#4CAF50", fg="white")
+        self.btn_tras.grid(row=5, column=4, padx=5, pady=5)
 
-def registrar_movimento(mensagem):
-    texto_log.config(state=tk.NORMAL)
-    texto_log.insert(tk.END, mensagem + "\n")
-    texto_log.see(tk.END)
-    texto_log.config(state=tk.DISABLED)
+        self.btn_esquerda = tk.Button(self.frame_controles, text="Mover para Esquerda", command=self.move_esquerda, bg="#4CAF50", fg="white")
+        self.btn_esquerda.grid(row=6, column=4, padx=5, pady=5)
 
-def mover_bola_perto_do_gol():
-    canvas.coords(personagem, 150, 140, 170, 160)  # Move a bola mais perto do gol
-    verificar_gol()
+        self.btn_direita = tk.Button(self.frame_controles, text="Mover para Direita", command=self.move_direita, bg="#4CAF50", fg="white")
+        self.btn_direita.grid(row=6, column=5, padx=5, pady=5)
 
-def main():
-    janela = tk.Tk()
-    janela.title("Vai que é tua Carolino")
+    def move_frente(self):
+        self.movimentos.append("frente")
 
-    frame_controles = tk.Frame(janela)
-    frame_controles.pack(side=tk.LEFT, padx=10, pady=10)
+    def move_tras(self):
+        self.movimentos.append("tras")
 
-    global frame_log
-    frame_log = tk.Frame(janela)
-    frame_log.pack(side=tk.RIGHT, padx=10, pady=10)
+    def move_esquerda(self):
+        self.movimentos.append("esquerda")
 
-    btn_frente = tk.Button(frame_controles, text="Mover para Frente", command=move_frente)
-    btn_frente.grid(row=0, column=0)
+    def move_direita(self):
+        self.movimentos.append("direita")
 
-    btn_tras = tk.Button(frame_controles, text="Mover para Trás", command=move_tras)
-    btn_tras.grid(row=1, column=0)
+    def verificar_gol(self):
+        coordenadas_bola = self.canvas.coords(self.personagem)
+        coordenadas_gol = self.canvas.coords(self.gol)
+        if (coordenadas_bola[1] <= coordenadas_gol[3]):  # Check if any part of the ball crosses the goal line
+            self.registrar_movimento("GOL!")
+        else:
+            self.registrar_movimento("Bola não chegou ao gol!")
 
-    btn_esquerda = tk.Button(frame_controles, text="Mover para Esquerda", command=move_esquerda)
-    btn_esquerda.grid(row=2, column=0)
 
-    btn_direita = tk.Button(frame_controles, text="Mover para Direita", command=move_direita)
-    btn_direita.grid(row=3, column=0)
+    def compilar_movimentos(self):
+        for movimento in self.movimentos:
+            if movimento == "frente":
+                self.canvas.move(self.personagem, 0, -25)
+            elif movimento == "tras":
+                self.canvas.move(self.personagem, 0, 25)
+            elif movimento == "esquerda":
+                self.canvas.move(self.personagem, -25, 0)
+            elif movimento == "direita":
+                self.canvas.move(self.personagem, 25, 0)
+        self.movimentos.clear()
+        self.verificar_gol()
 
-    global texto_log
-    texto_log = tk.Text(frame_log, width=30, height=10)
-    texto_log.pack()
+    def registrar_movimento(self, mensagem):
+        self.texto_log.config(state=tk.NORMAL)
+        self.texto_log.insert(tk.END, mensagem + "\n")
+        self.texto_log.see(tk.END)
+        self.texto_log.config(state=tk.DISABLED)
 
-    btn_compilar = tk.Button(frame_log, text="Compilar Movimentos", command=compilar_movimentos)
-    btn_compilar.pack()
-
-    texto_log.config(state=tk.DISABLED)
-
-    global canvas, personagem, gol
-    canvas = tk.Canvas(janela, width=300, height=300)
-    canvas.pack()
-    personagem = canvas.create_oval(140, 140, 160, 160, fill="blue")
-    gol = canvas.create_rectangle(120, 20, 180, 0, fill="red")
-
-    janela.mainloop()
+    def main(self):
+        self.janela.mainloop()
 
 if __name__ == "__main__":
-    main()
+    janela = tk.Tk()
+    jogo = JogoFutebol(janela)
+    jogo.main()
