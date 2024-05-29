@@ -13,6 +13,10 @@ class JogoFutebol:
         self.frame_log = tk.Frame(self.janela, bg="#f0f0f0")
         self.frame_log.pack(side=tk.RIGHT, padx=10, pady=10)
 
+        # Create label above the text box
+        self.label_status = tk.Label(self.frame_log, text="", bg="#f0f0f0", fg="#333", font=("Helvetica", 10))
+        self.label_status.pack()
+
         self.texto_log = tk.Text(self.frame_log, width=30, height=10, bg="#e6e6e6", fg="#333", font=("Helvetica", 10))
         self.texto_log.pack()
 
@@ -53,11 +57,10 @@ class JogoFutebol:
     def verificar_gol(self):
         coordenadas_bola = self.canvas.coords(self.personagem)
         coordenadas_gol = self.canvas.coords(self.gol)
-        if (coordenadas_bola[1] <= coordenadas_gol[3]):  # Check if any part of the ball crosses the goal line
+        if (coordenadas_bola[1] <= coordenadas_gol[3]):  
             self.registrar_movimento("GOL!")
         else:
             self.registrar_movimento("Bola não chegou ao gol!")
-
 
     def compilar_movimentos(self):
         for movimento in self.movimentos:
@@ -73,8 +76,9 @@ class JogoFutebol:
         self.verificar_gol()
 
     def registrar_movimento(self, mensagem):
+        self.label_status.config(text=mensagem)  
+        self.janela.after(2000, lambda: self.label_status.config(text="")) 
         self.texto_log.config(state=tk.NORMAL)
-        self.texto_log.insert(tk.END, mensagem + "\n")
         self.texto_log.see(tk.END)
         self.texto_log.config(state=tk.DISABLED)
 
