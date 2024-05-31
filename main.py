@@ -11,6 +11,7 @@ class JogoFutebol:
         self.primeira_fase_concluida = False
         self.janela = janela
         self.janela.title("Vai que é tua Carolino")
+        self.janela.configure(bg="white")  
 
         self.movimentos = []
 
@@ -29,11 +30,18 @@ class JogoFutebol:
         self.btn_compilar = tk.Button(self.frame_log, text="Compilar Movimentos", command=self.compilar_movimentos, bg="#4CAF50", fg="white")
         self.btn_compilar.pack(side=tk.BOTTOM, pady=(10,0))
 
-        self.btn_reset = tk.Button(self.frame_log, text="Resetar", command=self.resetar_jogo, bg="#FF5733", fg="white")
+        self.btn_reset = tk.Button(self.frame_log, text="Resetar Jogo", command=self.resetar_jogo, bg="#FF5733", fg="white")
         self.btn_reset.pack(side=tk.BOTTOM, pady=(5,0))
 
-        self.canvas = tk.Canvas(self.janela, width=300, height=300, bg="white", highlightthickness=0)
+        self.canvas = tk.Canvas(self.janela, width=300, height=350, bg="white", highlightthickness=0)
         self.canvas.pack()
+
+        self.imagem_fundo = tk.PhotoImage(file="campo.png")
+
+        x_center = (300 - self.imagem_fundo.width()) // 2
+
+        self.canvas.create_image(x_center, 0, anchor=tk.NW, image=self.imagem_fundo)
+        
         self.personagem = self.canvas.create_oval(140, 140, 160, 160, fill="blue")
         self.gol = self.canvas.create_rectangle(120, 20, 180, 0, fill="red")
 
@@ -69,7 +77,7 @@ class JogoFutebol:
             if not self.primeira_fase_concluida:
                 self.primeira_fase_concluida = True
                 movimentos_str = '\n'.join(self.movimentos)
-                messagebox.showinfo("GOLLL!", f"Você resolveu este nível com {len(self.movimentos)} linhas de Python:\n{movimentos_str}\n\nVocê está pronto para o nível 2")
+                messagebox.showinfo("GOLLL!", f"Você resolveu este nível com {len(self.movimentos)} linhas de Python:\n{movimentos_str}\n\nVocê está pronto para o nível 2?")
                 self.iniciar_segunda_fase()
             else:
                 self.registrar_movimento("Segunda fase já iniciada!")
@@ -91,6 +99,9 @@ class JogoFutebol:
         self.movimentos.clear()
         self.label_status.config(text="")
         self.gol = self.canvas.create_rectangle(120, 20, 180, 0, fill="red")
+        self.imagem_fundo = tk.PhotoImage(file="campo.png")
+        x_center = (300 - self.imagem_fundo.width()) // 2
+        self.canvas.create_image(x_center, 0, anchor=tk.NW, image=self.imagem_fundo)
 
     def compilar_movimentos(self):
         movimentos_temporarios = list(self.movimentos)  
