@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from PIL import Image, ImageTk
 
 class BotaoMovimento(tk.Button):
     def __init__(self, *args, direcao=None, **kwargs):
@@ -43,6 +44,7 @@ class JogoFutebol:
         self.canvas.create_image(x_center, 0, anchor=tk.NW, image=self.imagem_fundo)
         
         self.personagem = self.canvas.create_oval(140, 140, 160, 160, fill="blue")
+
         self.gol = self.canvas.create_rectangle(120, 20, 180, 0, fill="red")
 
         self.btn_frente = BotaoMovimento(self.frame_controles, text="Mover para frente", command=lambda: self.move("Mover para frente"), bg="#4CAF50", fg="white", direcao="frente")
@@ -92,7 +94,7 @@ class JogoFutebol:
         self.label_fase.config(text="Segunda Fase")
         self.canvas.coords(self.gol, 100, 0, 200, 20) 
         self.canvas.itemconfig(self.gol, fill="red")
-        self.bola = self.canvas.create_oval(140, 140, 160, 160, fill="yellow")
+        self.personagem = self.canvas.create_oval(140, 140, 160, 160, fill="blue")
 
     def limpar_jogo(self):
         self.canvas.delete("all")
